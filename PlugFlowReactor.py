@@ -1,25 +1,21 @@
 import numpy as np
 from matplotlib import pyplot as plt
 
-#
 # Data :
-#
-
 L = 3  # Length [m]
-d = 0.2  # Length [m]
+d = 0.2  # Diameter [m]
 p = 2  # Pressure [bar]
 T0 = 500  # Temperature [K]
 k = 4 * (10 ** 5) * np.exp(-25000 / (8.314 * T0))
 r = k * p  # Reaction rate [mol/s]
-deltaH = 20000  # Enthalpy [J/kg]
+deltaH = 20000  # Enthalpy [J/kmol]
 area = np.pi * (d / 2) ** 2
 MA = 50  # Molar mass [kg/kmol]
 cp = 1200  # Heat Capacity [J/kg.K]
 Tf = 650  # Furnace temperature [K]
 U = 140  # Heat transfer coefficient[W/m2*K]
-mdot = 1000 * MA / 3600  # Mass flux
-
-# Computation
+mdot = 1000 * MA / 3600
+# Explicit Euler method
 
 Zstart = 0
 Zend = 3
@@ -34,8 +30,10 @@ for n in [25]:
     X[0] = Xstart
     T[0] = Tstart
     for i in range(n):
+        k = 4 * (10 ** 5) * np.exp(-25000 / (8.314 * T[i]))
+        r = k * p / 50    # [kmol/(m^2 * s)]
         X[i + 1] = X[i] + h * Z[i] * r * area * 1000 / 3600
-        T[i + 1] = T[i] + h * Z[i] * r * (-deltaH) * area / (mdot * cp)
+        T[i + 1] = T[i] + h * Z[i] * r * area * (-deltaH) / (mdot * cp)
 
 #
 # Graphical part
